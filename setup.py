@@ -6,11 +6,13 @@ with open('README.md', encoding='utf-8') as f:
 
 setup(
     name='mkdocs-confluence-publisher',
-    version='0.1.0',
+    version='0.1.1',
     packages=find_packages(exclude=['tests*']),
     install_requires=[
         'mkdocs>=1.0',
         'atlassian-python-api>=3.14.0',
+        'mistune',
+        'md2cf'
     ],
     entry_points={
         'mkdocs.plugins': [
