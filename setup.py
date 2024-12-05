@@ -12,7 +12,8 @@ setup(
         'mkdocs>=1.0',
         'atlassian-python-api>=3.14.0',
         'mistune',
-        'md2cf'
+        'md2cf',
+        'python-dotenv'
     ],
     entry_points={
         'mkdocs.plugins': [
