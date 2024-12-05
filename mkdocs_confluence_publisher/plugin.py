@@ -1,5 +1,7 @@
 import logging
 import os
+import dotenv
+from dotenv import load_dotenv
 from typing import List, Dict
 
 from atlassian import Confluence
@@ -20,6 +22,7 @@ class ConfluencePublisherPlugin(BasePlugin):
     )
 
     def __init__(self):
+        load_dotenv()
         self.confluence = None
         self.logger = logging.getLogger('mkdocs.plugins.confluence_publisher')
         self.md_to_page: MD_to_Page = {}
