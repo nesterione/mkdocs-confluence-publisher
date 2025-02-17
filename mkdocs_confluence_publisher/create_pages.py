@@ -4,8 +4,18 @@ from .types import MD_to_Page, ConfluencePage
 
 logger = logging.getLogger('mkdocs.plugins.confluence_publisher.create_pages')
 
+def is_index_page(item):
+    return isinstance(item, Page) and item.file.src_path.endswith('index.md')
+
 def create_pages(confluence, items, prefix, space_key, parent_id, md_to_page: MD_to_Page):
     for item in items:
+        # Skip creating a new page for index.md as it will use the parent page
+        if is_index_page(item):
+            page_title = confluence.get_page_by_id(parent_id)['title']
+            md_to_page[item.file.src_path] = ConfluencePage(id=parent_id, title=page_title)
+            logger.debug(f"Mapped index.md to root page ID {parent_id}")
+            continue
+
         page_title = f"{prefix}{item.title}"
         logger.debug(f"Processing item: {page_title}")
 

@@ -26,6 +26,7 @@ class ConfluencePublisherPlugin(BasePlugin):
         self.logger = logging.getLogger('mkdocs.plugins.confluence_publisher')
         self.md_to_page: MD_to_Page = {}
         self.page_attachments: Dict[str, List[str]] = {}
+        self.root_page = None
 
     def on_config(self, config):
         self.logger.debug("Initializing Confluence connection")
@@ -34,7 +35,12 @@ class ConfluencePublisherPlugin(BasePlugin):
             username=os.environ.get('CONFLUENCE_USERNAME'),
             password=os.environ.get('CONFLUENCE_API_TOKEN')
         )
-        self.logger.debug("Confluence connection initialized")
+        # Store root page information
+        parent_page_id = self.config['parent_page_id']
+        self.root_page = self.confluence.get_page_by_id(parent_page_id)
+        if not self.root_page:
+            raise ValueError(f"Could not find root page with ID: {parent_page_id}")
+        self.logger.debug(f"Root page found: {self.root_page['title']}")
         return config
 
     def on_nav(self, nav, config, files):

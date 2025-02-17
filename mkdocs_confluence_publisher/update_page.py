@@ -77,6 +77,19 @@ def update_page(markdown: str, page, confluence, md_to_page: MD_to_Page) -> List
     confluence_page: ConfluencePage = md_to_page.get(page.file.src_path)
     if confluence_page:
         logger.debug(f"Updating Confluence page: {confluence_page.title}")
+        
+        # For root page (index.md), preserve any existing children macro at the end
+        if page.file.src_path.endswith('index.md'):
+            existing_page = confluence.get_page_by_id(
+                confluence_page.id, 
+                expand='body.storage'
+            )
+            if existing_page.get('body', {}).get('storage', {}).get('value'):
+                existing_content = existing_page['body']['storage']['value']
+                if '<ac:structured-macro ac:name="children"' in existing_content:
+                    confluence_content += '\n<ac:structured-macro ac:name="children" />'
+                    logger.debug("Preserved children macro for root page")
+
         confluence.update_page(
             page_id=confluence_page.id,
             body=confluence_content,
